@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block memu %}
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingOne">
+                  <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                      网络运维
+                    </a>
+                  </h4>
+                </div>
+                  <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                  <div class="panel-body">
+                      <a href="/app02/devman/">设备管理</a>
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingTwo">
+                  <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                      系统运维
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                  <div class="panel-body">
+                    工具展示
+                  </div>
+                </div>
+              </div>
+            </div>
+{% endblock %}
+
+{% block content2 %}
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/login/">李虎</a></li>
+        <li><a href="/login/">注销</a></li>
+      </ul>
+{% endblock %}

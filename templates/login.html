@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/bootstrap-3.4.1-dist/css/bootstrap.min.css">
+    <script type="text/javascript" src="/static/bootstrap-3.4.1-dist/js/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="/static/bootstrap-3.4.1-dist/js/bootstrap.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <title>登录</title>
+</head>
+<body>
+    <div style="text-align: center;margin-top: 50px" >
+        <table align="center">
+            <h3 >用户登录</h3>
+            <hr>
+            <tr>
+                <td><label for="a">用户名：</label></td>
+                <td><input type="text" placeholder="请输入账号" id="a" class="form-control"></td>
+            </tr>
+            <tr>
+                <td><label for="b">密码：</label></td>
+                <td><input type="password" placeholder="请输入密码"  id="b" class="form-control"></td>
+            </tr>
+        </table>
+        <br>
+        <button id="c" class="btn btn-default">登录</button>
+        <p>
+            <a href="">忘记密码</a>
+            <a href="/regi/">注册</a>
+        </p>
+        <p class="login_error"></p>
+    </div>
+
+    <script>
+        $("#c").click(function (){
+            $.ajax({
+                url:"/login/",
+                type:"POST",
+                data:{
+                    "user":$("#a").val(),
+                    "pwd":$("#b").val(),
+                    //"csrfmiddlewaretoken":$("[name='csrfmiddlewaretoken']").val()
+                    "csrfmiddlewaretoken":$.cookie("csrftoken")
+                },
+                success:function (data) {
+                    var data=JSON.parse(data);
+                    if(data["user"]){
+                        location.href="/work/"
+                    }
+                    else {
+                        var error_msg=data["errorMsg"];
+                        $(".login_error").html(error_msg).css("color","red");
+                    }
+
+                }
+            })
+        })
+
+
+    </script>
+
+</body>
+</html>

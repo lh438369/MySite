@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block memu %}
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingOne">
+                  <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                      网络运维
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                  <div class="panel-body">
+                      <a href="/app02/devman/">设备管理</a>
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingTwo">
+                  <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                      系统运维
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                  <div class="panel-body">
+                    工具展示
+                  </div>
+                </div>
+              </div>
+            </div>
+{% endblock %}
+
+{% block content %}
+    <form action="/app02/devedit/{{ dev_obj.ID }}" method="POST">
+        {% csrf_token %}
+        <h3 >编辑设备信息</h3>
+        <hr>
+        <table align="center">
+
+            <tr>
+                <td><label for="a">办公区：</label></td>
+                <td><input type="text" name="devzone" id="a" value="{{ dev_obj.devzone }}" class="form-control"></td>
+            </tr>
+            <tr>
+                    <td><label for="b">设备名：</label></td>
+                    <td><input type="text" name="devname" id="b" value="{{ dev_obj.devname }}" class="form-control"></td>
+            </tr>
+            <tr>
+                <td><label for="c">设备IP：</label></td>
+                <td><input type="text" name="devip" id="c" value="{{ dev_obj.devip }}" class="form-control"></td>
+            </tr>
+            <tr>
+                <td><label for="d">设备品牌：</label></td>
+                <td><input type="text" name="devbrand" id="d" value="{{ dev_obj.devbrand.devpd }}" class="form-control"></td>
+            </tr>
+            <tr>
+                <td><label for="e">设备类型：</label></td>
+{#                <td><input type="text" name="devbrand" id="e" class="form-control"></td>#}
+                <td>
+                    <select name="devtype" id="e" class="form-control">
+{#                        {% if dev_obj.devbrand == "路由器"%}#}
+{#                            <option selected value="路由器">路由器</option>#}
+{#                        {% elif dev_obj.devbrand == "交换机"%}#}
+{#                            <option selected value="交换机">交换机</option>#}
+{#                        {% elif dev_obj.devbrand == "防火墙"%}#}
+{#                            <option selected value="防火墙">防火墙</option>#}
+{#                        {% elif dev_obj.devbrand == "无线AC"%}#}
+{#                            <option selected value="无线AC">无线AC</option>#}
+{#                        {% elif dev_obj.devbrand == "AP"%}#}
+{#                            <option selected value="AP">AP</option>#}
+{#                        {% endif %}#}
+
+                            <option value="路由器">路由器</option>
+                            <option value="交换机">交换机</option>
+                            <option value="防火墙">防火墙</option>
+                            <option value="无线AC">无线AC</option>
+                            <option value="AP">AP</option>
+
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <p align="center"><input type="submit" class="btn btn-default"></p>
+     </form>
+{% endblock %}

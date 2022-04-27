@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block memu %}
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+                       aria-expanded="true" aria-controls="collapseOne">
+                        网络运维
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                    <a href="/app02/devman/">设备管理</a>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingTwo">
+                <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                       href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        系统运维
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                <div class="panel-body">
+                    工具展示
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <p>
+        <a href="/app02/devadd/">
+            <button type="button" class="btn btn-primary">添加</button>
+        </a>
+    </p>
+    <form action="/app02/devbackup/" method="post">
+        {% csrf_token %}
+        <table class="table tab-hover">
+            <tr>
+                <th></th>
+                <th>编号</th>
+                <th>办公区</th>
+                <th>设备名</th>
+                <th>设备IP</th>
+                <th>设备类型</th>
+                <th>设备品牌</th>
+                <th>操作</th>
+            </tr>
+            {% for dev_obj in dev_list %}
+                <tr>
+                    <td>
+                        <input type="checkbox" value="{{ dev_obj.ID }}" name="hostbackup">
+                    </td>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ dev_obj.devzone }}</td>
+                    <td>{{ dev_obj.devname }}</td>
+                    <td>{{ dev_obj.devip }}</td>
+                    <td>{{ dev_obj.devtype }}</td>
+                    <td>{{ dev_obj.devbrand.devpd }}</td>
+                    <td>
+                        <a href="/app02/devedit/{{ dev_obj.ID }}">
+                            <button type="button" class="btn btn-primary">编辑</button>
+                        </a>
+                        <a href="/app02/devdelet/{{ dev_obj.ID }}">
+                            <button type="button" class="btn btn-danger">删除</button>
+                        </a>
+                        <a href="/app02/devbackup/{{ dev_obj.ID }}">
+                            <button type="button" class="btn btn-info">备份</button>
+                        </a>
+                        {#                            <p style="color: red;text-align:center">{{ msg }}</p>#}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <p>
+            <input type="submit" class="btn btn-primary" value="批量备份">
+        </p>
+    </form>
+    <div style="position: absolute;top: 600px;left: 600px">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                {% if dev_list.has_previous %}
+                    <li>
+                        <a href="/app02/devman/?p={{ dev_list.previous_page_number }}" aria-label="Previous">上一页</a>
+                    </li>
+                {% endif %}
+                {% for i in page_range %}
+                    {% if i == num %}
+                        <li class="active"><a href="/app02/devman/?p={{ i }}">{{ i }}</a></li>
+                    {% else %}
+                        <li><a href="/app02/devman/?p={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if dev_list.has_next %}
+                    <li>
+                        <a href="/app02/devman/?p={{ dev_list.next_page_number }}" aria-label="Next">下一页</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
