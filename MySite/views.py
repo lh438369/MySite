@@ -1,43 +1,48 @@
 from django.shortcuts import render,HttpResponse,redirect
+from django.contrib import auth
+import json
 
-def index(request):
-    return render(request,"index.html")
-
-def login_html(request):
-    return render(request,"login.html")
 
 def login(request):
-    user=request.POST.get("user")
-    pwd=request.POST.get("pwd")
-    loginResponse={"user":None,"errorMsg":None}
-    if user=="lihu" and pwd=="123":
-        loginResponse["user"]="lihu"
-    else:
-        loginResponse["errorMsg"]="用户名或密码错误"
-    import json
-    return HttpResponse(json.dumps(loginResponse))
+    login_response={"username":None,"error_msg":None}
+    if request.is_ajax():
+        username=request.GET.get("username")
+        password = request.GET.get("password")
+        valid=request.GET.get("valid")
+        print(valid)
+        session_valid=request.session.get("valid_code")
+        print(session_valid)
+        if valid == session_valid:
+            user=auth.authenticate(request,username=username,password=password)
+            if user:
+                login_response["username"]=username
+            else:
+                login_response["error_msg"]="用户名或密码错误，请重新输入"
 
-
-from django import forms
-from django.forms import widgets
-class RegiForm(forms.Form):
-    username=forms.CharField(min_length=8)
-    password=forms.CharField(
-        widget=widgets.PasswordInput()
-    )
-    repeat_password=forms.CharField(
-        widget=widgets.PasswordInput()
-    )
-    phone=forms.IntegerField()
-    email=forms.EmailField()
-
-def regi(request):
-    if request.method=="POST":
-        regiform=RegiForm(request.POST)
-        if regiform.is_valid():
-            print(regiform.cleaned_data)
         else:
-            print(regiform.errors)
-        return render(request,"regi.html",{"regiform":regiform})
-    regiform=RegiForm()
-    return render(request,"regi.html",{"regiform":regiform})
+            login_response["error_msg"]="验证码错误，请重新输入"
+        return HttpResponse(json.dumps(login_response))
+
+    return render(request,"login.html")
+
+def get_image(request):
+    from io import BytesIO
+    import random
+    f=BytesIO()
+    from PIL import Image,ImageDraw,ImageFont
+    img=Image.new(mode='RGB',size=(120,30),color=(random.randint(0,255),random.randint(0,255),random.randint(0,255)))
+    draw=ImageDraw.Draw(img,mode='RGB')
+    char_list=[]
+    for i in range(5):
+        char=random.choice([chr(random.randint(65,90)),chr(random.randint(97,122)),str(random.randint(1,9))])
+        font=ImageFont.truetype("MySite/static/font/segoesc",24)
+        draw.text([i*24,-7],char,(random.randint(0,255),random.randint(0,255),random.randint(0,255)),font=font)
+        char_list.append(char)
+    img.save(f,"png")
+    data=f.getvalue()
+    s=''.join(char_list)
+    request.session["valid_code"]=s
+    return HttpResponse(data)
+
+def index(request):
+    return HttpResponse("index")

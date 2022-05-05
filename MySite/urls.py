@@ -19,11 +19,10 @@ from MySite import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', views.index),
-    url(r'^login_html', views.login_html),
     url(r'^login/', views.login),
-    url(r'^regi/', views.regi),
-
-    url(r'^work/', include('work.urls')),
+    url(r'^index/', views.index),
+    url(r'^get_image/', views.get_image),
+    # url(r'^regi/', views.regi),
+    # url(r'^work/', include('work.urls')),
 
 ]
