@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="/static/image/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/static/bootstrap-3.4.1-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/login.css">
+    <script src="https://lib.sinaapp.com/js/jquery/2.0.2/jquery-2.0.2.min.js"></script>
+    <script type="text/javascript" src="/static/bootstrap-3.4.1-dist/js/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="/static/bootstrap-3.4.1-dist/js/bootstrap.js"></script>
+    <title>我的站点</title>
+    <style>
+        #avatar{
+            position: relative;
+            width: 60px;
+            height: 80px;
+        }
+        #avatar_img,#file{
+            width: 60px;
+            height: 60px;
+            position: absolute;
+            left: 0px;
+            top: 25px;
+        }
+        #file{
+            opacity: 0;
+        }
+    </style>
+
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <form class="col-md-6 col-md-offset-2">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_name">用户名</label>
+                {{ regiform.name }} <span class="error"></span>
+            </div>
+            <div class="form-group">
+                <label for="id_pwd">密码</label>
+                {{ regiform.pwd }} <span class="error"></span>
+            </div>
+            <div class="form-group">
+                <label for="id_repwd">确认密码</label>
+                {{ regiform.repwd }} <span class="error"></span>
+            </div>
+            <div class="form-group">
+                <label for="id_email">邮箱</label>
+                {{ regiform.email }} <span class="error"></span>
+            </div>
+            <div class="form-group">
+                <label for="id_phone">手机号</label>
+                {{ regiform.phone }} <span class="error"></span>
+            </div>
+            <div class="form-group" id="avatar">
+                <label for="file">头像</label>
+                <p><img src="/static/img/default.png" id="avatar_img"></p>
+                <p><input type="file" id="file"></p>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <input type="button" value="注册" class="btn btn-info regiBtn">
+                </div>
+            </div>
+            <span class="error"></span>
+        </form>
+    </div>
+</div>
+
+<script>
+    $(".regiBtn").click(function () {
+        var formdata=new FormData();
+        formdata.append("name",$("#id_name").val());
+        formdata.append("pwd",$("#id_name").val());
+        formdata.append("repwd",$("#id_name").val());
+        formdata.append("email",$("#id_email").val());
+        formdata.append("phone",$("#id_phone").val());
+        formdata.append("csrfmiddlewaretoken",$("[name='csrfmiddlewaretoken']").val());
+        formdata.append("avatar",$("#file")[0].files[0]);
+
+        $.ajax({
+            url:"/regi/",
+            type:"post",
+            data:formdata,
+            contentType:false,
+            processData:false,
+            success:function (data) {
+                console.log(data);
+                var data=JSON.parse(data);
+                if(data.user){
+                    location.href="/login/"
+                }
+                else{
+                    var error_dict=data.error_msg;
+                    $(".error").html("");
+                    $.each(error_dict,function (i,j) {
+                        console.log(i,j);
+                        $("#id_"+i).next().addClass("pull-right").html(j[0]).css("color","red");
+                        if(i=="__all__"){
+                            $("#id_repwd").next().addClass("pull-right").html(j[0]).css("color","red")
+                        }
+                    })
+                }
+            }
+        })
+        }
+    )
+    
+    $("#file").change(function () {
+        var choose_file=$("#file")[0].files[0];
+        var reader=new FileReader();
+        reader.readAsDataURL(choose_file);
+        reader.onload=function () {
+            $("#avatar_img").attr("src",this.result)
+            
+        }
+    })
+</script>
+
+
+</body>
+</html>

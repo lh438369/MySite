@@ -1,7 +1,8 @@
 from django.shortcuts import render,HttpResponse,redirect
 from django.contrib import auth
 import json
-
+import random
+from blog.models import UserInfo
 
 def login(request):
     login_response={"username":None,"error_msg":None}
@@ -9,13 +10,16 @@ def login(request):
         username=request.GET.get("username")
         password = request.GET.get("password")
         valid=request.GET.get("valid")
+        print(type(valid))
         print(valid)
         session_valid=request.session.get("valid_code")
+        print(type(session_valid))
         print(session_valid)
         if valid == session_valid:
             user=auth.authenticate(request,username=username,password=password)
             if user:
                 login_response["username"]=username
+                request.session["is_login"]=True
             else:
                 login_response["error_msg"]="用户名或密码错误，请重新输入"
 
@@ -27,7 +31,6 @@ def login(request):
 
 def get_image(request):
     from io import BytesIO
-    import random
     f=BytesIO()
     from PIL import Image,ImageDraw,ImageFont
     img=Image.new(mode='RGB',size=(120,30),color=(random.randint(0,255),random.randint(0,255),random.randint(0,255)))
@@ -45,4 +48,32 @@ def get_image(request):
     return HttpResponse(data)
 
 def index(request):
-    return HttpResponse("index")
+    if request.session.get("is_login"):
+        return HttpResponse("index")
+    return redirect("/login/")
+
+def login_out(request):
+    request.session.flush()
+    return redirect("/login/")
+
+from function.myforms import RegiForm
+def regi(request):
+    if request.is_ajax():
+        regiform = RegiForm(request.POST)
+        regiResponse={"user":None,"error_msg":None}
+        if regiform.is_valid():
+            name=regiform.cleaned_data.get("name")
+            pwd = regiform.cleaned_data.get("pwd")
+            repwd = regiform.cleaned_data.get("repwd")
+            email = regiform.cleaned_data.get("email")
+            phone = regiform.cleaned_data.get("phone")
+            avatar=request.FILES.get("avatar")
+            print(avatar)
+            print(type(avatar))
+            user=UserInfo.objects.create_user(username=name,password=pwd,email=email,telephone=phone,avatar=avatar)
+            regiResponse["user"]=user.username
+        else:
+            regiResponse["error_msg"]=regiform.errors
+        return HttpResponse(json.dumps(regiResponse))
+    regiform = RegiForm()
+    return render(request,"regi.html",{"regiform":regiform})

@@ -20,6 +20,7 @@ from MySite import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^login/', views.login),
+    url(r'^regi/', views.regi),
     url(r'^index/', views.index),
     url(r'^get_image/', views.get_image),
     # url(r'^regi/', views.regi),
